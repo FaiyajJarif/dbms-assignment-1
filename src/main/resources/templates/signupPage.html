@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sign Up - Hishab Nikash</title>
+    <link rel="stylesheet" href="stylesSignup.css">
+</head>
+<body>
+<div class="main">
+    <div class="loginPage">
+        <div class="icon">
+            <h1 class="logo" onclick="window.location.href='/'">Hishab Nikash</h1>
+        </div>
+    </div>
+
+    <div class="loginSetup">
+        <div class="setUp-left">
+            <img src="Images/LogoN.png" class="logo-img" alt="Logo">
+            <br>
+            <h1>
+                <span class="oneS">Start managing your</span><br>
+                <span class="twoS">Hishab Nikash today.</span>
+            </h1>
+            <p>
+                Create your account and begin tracking every taka<br>
+                with clarity and control.
+            </p>
+        </div>
+
+        <div class="setUp-right">
+            <h2>Sign Up</h2>
+
+            <!-- Messages -->
+            <p id="signup-error" style="color:red; min-height:20px;"></p>
+            <p id="signup-success" style="color:green; min-height:20px;"></p>
+
+            <form id="signup-form"
+                  style="width: 100%; display:flex; flex-direction:column; align-items:center;">
+
+                <!-- Name -->
+                <input type="text"
+                       id="signup-name"
+                       name="name"
+                       placeholder="Your full name"
+                       required>
+                <br>
+
+                <!-- Email -->
+                <input type="email"
+                       id="signup-email"
+                       name="email"
+                       placeholder="Your email"
+                       required>
+                <br>
+
+                <!-- Password -->
+                <input type="password"
+                       id="signup-password"
+                       name="password"
+                       placeholder="Create password"
+                       required>
+                <br>
+
+                <!-- Confirm Password -->
+                <input type="password"
+                       id="signup-confirm-password"
+                       name="confirmPassword"
+                       placeholder="Confirm password"
+                       required>
+                <br>
+
+                <!-- Date of Birth -->
+                <label style="align-self:flex-start; margin-top:10px; font-size:12px; opacity:0.7;">
+                    Date of Birth
+                </label>
+                <input type="date"
+                       id="signup-dob"
+                       name="dateOfBirth">
+                <br>
+
+                <!-- Timezone -->
+                <label style="align-self:flex-start; margin-top:10px; font-size:12px; opacity:0.7;">
+                    Timezone
+                </label>
+                <select id="signup-timezone" name="timezone" style="width:100%; height:35px; margin-top:5px;">
+                    <option value="">Select timezone (optional)</option>
+                    <option value="Asia/Dhaka">Asia/Dhaka</option>
+                    <option value="Asia/Kolkata">Asia/Kolkata</option>
+                    <option value="Asia/Singapore">Asia/Singapore</option>
+                    <option value="Europe/London">Europe/London</option>
+                    <option value="America/New_York">America/New_York</option>
+                </select>
+                <br>
+
+                <!-- Budget start day -->
+                <label style="align-self:flex-start; margin-top:10px; font-size:12px; opacity:0.7;">
+                    Budget start day (1–28)
+                </label>
+                <input type="number"
+                       id="signup-budget-start-day"
+                       name="budgetStartDay"
+                       min="1"
+                       max="28"
+                       placeholder="1">
+                <br>
+
+                <button class="logbtn" type="submit">Create Account</button>
+            </form>
+
+            <p class="link" style="margin-top:10px;">Already have an account?</p><br>
+            <span class="signup" onclick="window.location.href='login';">Login here.</span>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+
+<!-- JS to call REST API -->
+<script>
+    const signupForm = document.getElementById('signup-form');
+    const signupError = document.getElementById('signup-error');
+    const signupSuccess = document.getElementById('signup-success');
+
+    signupForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); // stop normal form submit
+
+        signupError.textContent = '';
+        signupSuccess.textContent = '';
+
+        const name = document.getElementById('signup-name').value;
+        const email = document.getElementById('signup-email').value;
+        const password = document.getElementById('signup-password').value;
+        const confirmPassword = document.getElementById('signup-confirm-password').value;
+        const dateOfBirth = document.getElementById('signup-dob').value;
+        const timezone = document.getElementById('signup-timezone').value;
+        const budgetStartDayValue = document.getElementById('signup-budget-start-day').value;
+        const budgetStartDay = budgetStartDayValue ? parseInt(budgetStartDayValue, 10) : null;
+
+        try {
+            const response = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    password,
+                    confirmPassword,
+                    dateOfBirth,
+                    timezone,
+                    budgetStartDay
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                signupSuccess.textContent = data.message || 'Account created. Please check your email.';
+                // Optionally redirect after a short delay
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 1500);
+            } else {
+                signupError.textContent = data.message || 'Signup failed';
+            }
+
+        } catch (err) {
+            console.error(err);
+            signupError.textContent = 'Something went wrong. Please try again.';
+        }
+    });
+</script>
+</body>
+</html>

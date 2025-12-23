@@ -1,0 +1,110 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+}
+
+.left {
+    width: 20%;
+    background-image: url("dark_blue_.jpg");
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    padding: 20px;
+}
+
+.logo-img {
+    height: 30px;
+    width: 30px;
+    filter: brightness(0.9) contrast(1.1);
+    cursor: pointer;
+}
+
+/* Dropdown Button */
+.left .dropdown-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 8px;
+    border: none;
+    background: rgba(51, 51, 160, 0.8);
+    cursor: pointer;
+    border-radius: 5px;
+}
+.left .dropdown-btn .menu-title {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* space between image and text */
+}
+
+.left .dropdown-btn .menu-text {
+    font-size: 20px;      /* ← change text size here */
+    font-weight: bold;    
+    color: #eeeef0;         /* or any color */
+    font-family: Arial;
+}
+
+/* Panel (hidden by default) */
+.left .dropdown-panel {
+    width: 300px;
+    height: 450px;
+    background: #e4e5e7;
+    border-radius: 10px;
+    margin-top: 10px;
+    padding: 20px;
+
+    display: none; /* hidden until clicked */
+    overflow-y: auto;
+}
+
+/* When opened */
+.left .dropdown-panel.open {
+    display: block;
+}
+
+.left .dropdown-panel span {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+    opacity: 0.8;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.left .dropdown-panel span:hover {
+    background-color: rgba(51, 51, 160, 0.8);
+    color: white;
+    border-radius: 5px;
+}
+
+
+.left .dropdown-panel hr{
+    border: none;
+    border-top: 1px solid #ccc;
+    height: 1px;
+    margin: 10px 0;
+}
+
+.left .dropdown-panel p{
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* Icon size independent */
+ion-icon {
+    font-size: 14px; /* change icon size separately */
+    color: Black;     /* optional */
+    opacity: 0.6;
+}
+
+
+.right {
+    width: 80%;
+    background-image: url("White.jpg");
+    background-size: cover;
+    background-position: center;
+}

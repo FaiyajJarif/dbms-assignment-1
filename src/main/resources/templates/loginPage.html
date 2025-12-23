@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Login Page</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="main">
+        <div class="loginPage">
+            <div class="icon">
+                <h1 class="logo" onclick="window.location.href='/'">Hishab Nikash.</h1>
+            </div>
+        </div>
+
+        <div class="loginSetup">
+            <div class="setUp-left">
+                <img src="Images/LogoN.png" class="logo-img" alt="Logo">
+                <br>
+                <h1>
+                    <span class="oneS">Allocate Your Budget,</span><br>
+                    <span class="twoS">Accordingly through<br> Master Life Budgeting.</span>
+                </h1>
+                <p>
+                    Spend your money with proper judgment,<br>
+                    while use your every taka according to need.
+                </p>
+            </div>
+
+            <div class="setUp-right">
+                <h2>Login Here</h2>
+
+                <!-- Error + resend messages (client side) -->
+                <p id="login-error" style="color: red; min-height: 20px;"></p>
+                <p id="resend-message" style="color: green; min-height: 20px;"></p>
+
+                <!-- LOGIN FORM (handled by JS, not posting directly to /login) -->
+                <form id="login-form"
+                      style="width: 100%; display:flex; flex-direction:column; align-items:center;">
+
+                    <input type="email"
+                           id="login-email"
+                           name="email"
+                           placeholder="Enter email here"
+                           required>
+                    <br>
+
+                    <input type="password"
+                           id="login-password"
+                           name="password"
+                           placeholder="Enter password here"
+                           required>
+                    <br>
+
+                    <div class="remember-container">
+                        <input type="checkbox" id="remember" class="remember-box">
+                        <span class="remember-text">Keep me logged in</span>
+                        <h3 class="forgot">Forgot password?</h3>
+                    </div>
+
+                    <button class="logbtn" type="submit">Login</button>
+                </form>
+
+                <!-- Resend verification button -->
+                <button type="button"
+                        class="logbtn"
+                        style="margin-top:10px; height:40px;"
+                        onclick="handleResendVerification()">
+                    Resend verification email
+                </button>
+
+                <p class="link">Don't have an account?</p><br>
+                <span class="signup" onclick="window.location.href='signup';">Sign Up Here.</span>
+
+                <div class="line-with-or">
+                    <span>or</span>
+                </div>
+
+                <div class="iconSocial">
+                    <button class="social-btn google-btn"
+                            onclick="window.location.href='https://accounts.google.com/';">
+                        <ion-icon name="logo-google"></ion-icon> Sign in with Google
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+
+    <!-- JS for REST login + resend verification -->
+    <script>
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const resendMsg = document.getElementById('resend-message');
+
+        // LOGIN via /api/auth/login
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // stop normal form submit
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            loginError.textContent = '';
+            resendMsg.textContent = '';
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Login OK → go to dashboard
+                    window.location.href = '/dashboard';
+                } else {
+                    // Show error from backend
+                    loginError.textContent = data.message || 'Login failed';
+                }
+            } catch (err) {
+                console.error(err);
+                loginError.textContent = 'Something went wrong. Please try again.';
+            }
+        });
+
+        // RESEND VERIFICATION via /api/auth/resend-verification
+        async function handleResendVerification() {
+            const email = document.getElementById('login-email').value;
+            loginError.textContent = '';
+            resendMsg.textContent = '';
+
+            if (!email) {
+                loginError.textContent = 'Enter your email above first.';
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/auth/resend-verification', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    resendMsg.textContent = data.message;
+                } else {
+                    loginError.textContent = data.message || 'Could not resend verification email.';
+                }
+            } catch (e) {
+                console.error(e);
+                loginError.textContent = 'Something went wrong. Please try again.';
+            }
+        }
+    </script>
+</body>
+</html>
