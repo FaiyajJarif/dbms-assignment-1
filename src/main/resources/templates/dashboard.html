@@ -1,99 +1,615 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>Document</title>
-    <link rel = "stylesheet" href = "stylesAlogHomePage.css">
-</head>
-<body>
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Dashboard</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link rel="stylesheet" href="mock.css">
+</head>
+
+<body>
     <div class="container">
 
-        <div class="left">
-
-            <button class="dropdown-btn" onclick="togglePanel()">
-                <div class="menu-title">
-                    <img src="Images/LogoN.png" class="logo-img" alt="MLB Logo">
-                    <span class="menu-text">Faiyaj's Plan ▼</span>
-                </div>
-            </button>            
-    
-            <div id="planPanel" class="dropdown-panel">
-                <span class="new">
-                    <ion-icon name="add-circle"></ion-icon>
-                    <span class="new-text">New Plan</span>
-                </span>  
-                <span class="folder">
-                    <ion-icon name="folder"></ion-icon>
-                    <span class="folder-text">View All Plans</span>
-                </span>
-                <hr class="line1">
-
-                <p class="lab2">Current Plan</p>
-                <span class="settings">
-                    <ion-icon name="settings"></ion-icon>
-                    <span class="settings-text">Plan Settings</span>
-                </span>
-                <span class="manage">
-                    <ion-icon name="construct"></ion-icon>
-                    <span class="manage-text">Manage Transaction</span>
-                </span>
-                <span class="export">
-                    <ion-icon name="document"></ion-icon>
-                    <span class="export-text">Export Plan</span>
-                </span>
-                <span class="newstart">
-                    <ion-icon name="leaf"></ion-icon>
-                    <span class="newstart-text">Fresh Start</span>
-                </span>   
-                <hr class="line2">
-                <p class="lab3">Account</p>
-                <span class="family">
-                    <ion-icon name="people"></ion-icon>
-                    <span class="family-text">Family Sharing</span>
-                </span>
-                
-                <span class="bank">
-                    <ion-icon name="card"></ion-icon>
-                    <span class="bank-text">Manage Bank Connections</span>
-                </span>
-
-                <hr class="line3">
-                
-                <span class="logout">
-                    <ion-icon name="log-out"></ion-icon>
-                    <span class="logout-text">Logout</span>
-                </span>
-
-                <hr class="line4">
-                <p class="lab1">Legal</p>
-                <span class="privacy-policy">
-                    <ion-icon name="shield-checkmark"></ion-icon>
-                    <span class="privacy-policy-text">Privacy Policy</span>
-                </span>
-                
-                <span class="privacy-choice">
-                    <ion-icon name="lock-closed"></ion-icon>
-                    <span class="privacy-choice-text">Privacy Choices</span>
-                </span>
-                           
+        <!-- LEFT SIDEBAR -->
+        <aside class="left">
+            <div class="menu-title">
+                <img src="Images/dbms_1.png" class="logo-img">
+                <span class="menu-text">My Plan ▼</span>
             </div>
-        </div>
-    
-        <div class="right">
-            <h1>Welcome</h1>
-        </div>
-    
+
+            <div class="sidebar">
+                <a href="#" id="nav-dashboard">
+                    <span class="material-symbols-outlined">grid_view</span>
+                    <h3>Dashboard</h3>
+                </a>
+
+                <a href="#" id="nav-search-name">
+                    <span class="material-symbols-outlined">search</span>
+                    <h3>Search By Name</h3>
+                </a>
+
+                <a href="#" id="nav-user-list">
+                    <span class="material-symbols-outlined">group</span>
+                    <h3>User List</h3>
+                </a>
+
+                <a href="#" id="nav-search-email">
+                    <span class="material-symbols-outlined">mail</span>
+                    <h3>Search By Email</h3>
+                </a>
+
+                <a href="#" id="nav-categories">
+                    <span class="material-symbols-outlined">category</span>
+                    <h3>Categories</h3>
+                </a>
+
+                <a href="#" id="toggle-theme">
+                    <span class="material-symbols-outlined">dark_mode</span>
+                    <h3>Dark Mode</h3>
+                </a>
+
+                <a href="#" id="logout-btn">
+                    <span class="material-symbols-outlined">logout</span>
+                    <h3>Logout</h3>
+                </a>
+
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="right">
+            <div id="main-content"></div>
+        </main>
+
     </div>
 
-
     <script>
-    function togglePanel() {
-        const panel = document.getElementById("planPanel");
-        panel.classList.toggle("open");
-    }
+        /* =========================================================
+           GLOBALS
+        ========================================================= */
+        const mainContent = document.getElementById("main-content");
+        const token = localStorage.getItem("auth_token");
+
+        /* =========================================================
+           DASHBOARD VIEW
+        ========================================================= */
+        async function loadDashboard() {
+            const me = await fetch("/api/dashboard/me", {
+                headers: { Authorization: "Bearer " + token }
+            }).then(r => r.json());
+
+            const total = await fetch("/api/dashboard/total-users")
+                .then(r => r.json());
+
+            // 1️⃣ Render HTML FIRST
+            mainContent.innerHTML = `
+        <div class="dashboard-cards">
+            <div class="dash-card">
+                <h3>Total Users</h3>
+                <h1 id="totalUsersCounter">0</h1>
+            </div>
+
+            <div class="dash-card user-info-card">
+                <h3>Your Info</h3>
+
+                <div class="info-row">
+                    <span class="info-label">Name</span>
+                    <span class="info-value">${me.name}</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">${me.email}</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Registered</span>
+                    <span class="info-value">
+                        ${new Date(me.createdAt).toLocaleDateString()}
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="dash-card full">
+    <h3>User Growth</h3>
+
+        <div class="chart-toggle">
+            <button onclick="loadUserGrowthChart('daily')">Daily</button>
+            <button onclick="loadUserGrowthChart('weekly')">Weekly</button>
+        </div>
+
+        <canvas id="usersChart" height="120"></canvas>
+    </div>
+
+    `;
+
+            // 2️⃣ Animate counter AFTER DOM exists
+            setTimeout(() => {
+                animateCounter(
+                    document.getElementById("totalUsersCounter"),
+                    total.totalUsers
+                );
+            }, 100);
+
+            // 3️⃣ Render chart AFTER canvas exists
+            loadUserGrowthChart();
+        }
+
+
+        /* =========================================================
+           CATEGORIES VIEW
+        ========================================================= */
+        async function loadCategories() {
+            const res = await fetch("/api/dashboard/categories", {
+                headers: { Authorization: "Bearer " + token }
+            });
+            const data = await res.json();
+
+            mainContent.innerHTML = "";
+
+            Object.keys(data).forEach(parent => {
+                const section = document.createElement("div");
+                section.className = "category-section";
+                section.innerHTML = `<h3>${parent}</h3>`;
+
+                const list = document.createElement("div");
+
+                data[parent].forEach(child => {
+                    const row = document.createElement("div");
+                    row.className = "category-row";
+
+                    row.innerHTML = `
+                <div class="category-name">${child.name}</div>
+                <div class="category-budget">
+                    ৳ <input type="number" data-category-id="${child.id}">
+                    <span class="per">/ month</span>
+                </div>
+            `;
+
+                    const input = row.querySelector("input");
+                    input.addEventListener("blur", async () => {
+                        if (!input.value) return;
+
+                        await fetch("/api/budget/plan", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": "Bearer " + token
+                            },
+                            body: JSON.stringify({
+                                categoryId: input.dataset.categoryId,
+                                amount: input.value
+                            })
+                        });
+                    });
+
+                    list.appendChild(row);
+                });
+
+                section.appendChild(list);
+                mainContent.appendChild(section);
+            });
+        }
+
+        /* =========================================================
+           SEARCH USERS (PAGINATED)
+        ========================================================= */
+        let currentPage = 0;
+        const pageSize = 5;
+
+        async function searchUsers(page = 0) {
+            currentPage = page;
+            const keyword = document.getElementById("user-search").value.trim();
+            if (!keyword) return;
+
+            const res = await fetch(
+                `/api/dashboard/search-users?keyword=${keyword}&page=${page}&size=${pageSize}`,
+                { headers: { Authorization: "Bearer " + token } }
+            );
+
+            const data = await res.json();
+            const container = document.getElementById("user-results");
+            container.innerHTML = "";
+
+            // EMPTY STATE
+            if (data.users.length === 0) {
+                container.innerHTML = `
+            <div class="user-item enhanced">
+                <div class="user-avatar">!</div>
+                <div class="user-content">
+                    <span class="user-name">No users found</span>
+                    <div class="user-sub">Try a different name</div>
+                </div>
+            </div>
+        `;
+            } else {
+                data.users.forEach(u => {
+                    container.innerHTML += `
+                <div class="user-item enhanced">
+                    <div class="user-avatar">
+                        ${u.name.charAt(0).toUpperCase()}
+                    </div>
+
+                    <div class="user-content">
+                        <div class="user-header">
+                            <span class="user-name">${u.name}</span>
+                            <span class="user-badge">Active</span>
+                        </div>
+
+                        <div class="user-sub">
+                            <span class="user-email">${u.email}</span>
+                            ${u.createdAt
+                            ? `<span class="user-date">
+                                        Joined ${new Date(u.createdAt).toLocaleDateString()}
+                                       </span>`
+                            : ""
+                        }
+                        </div>
+                    </div>
+
+                    <div class="user-action">
+                        <span class="material-symbols-outlined">visibility</span>
+                    </div>
+                </div>
+            `;
+                });
+            }
+
+            // Pagination
+            document.getElementById("pageInfo").innerText = `Page ${page + 1}`;
+            document.getElementById("prevBtn").disabled = page === 0;
+            document.getElementById("nextBtn").disabled =
+                (page + 1) * pageSize >= data.totalResults;
+        }
+
+
+        /* =========================================================
+           FIRST 15 USERS
+        ========================================================= */
+        async function loadFirst15() {
+            const res = await fetch("/api/dashboard/first-15-users", {
+                headers: { Authorization: "Bearer " + token }
+            });
+
+            const users = await res.json();
+            const container = document.getElementById("first15-users");
+            container.innerHTML = "";
+
+            users.forEach(u => {
+                container.innerHTML += `
+            <div class="user-item enhanced">
+                <div class="user-avatar">
+                    ${u.name.charAt(0).toUpperCase()}
+                </div>
+
+                <div class="user-content">
+                    <div class="user-header">
+                        <span class="user-name">${u.name}</span>
+                        <span class="user-badge">Active</span>
+                    </div>
+
+                    <div class="user-sub">
+                        <span class="user-email">${u.email}</span>
+                        <span class="user-date">
+                            Joined ${new Date(u.createdAt).toLocaleDateString()}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="user-action">
+                    <span class="material-symbols-outlined">visibility</span>
+                </div>
+            </div>
+        `;
+            });
+        }
+
+
+        /* =========================================================
+           SEARCH USER BY EMAIL
+        ========================================================= */
+        async function searchUserCategories() {
+            const email = document.getElementById("email-search").value.trim();
+            if (!email) return;
+
+            const res = await fetch(
+                `/api/dashboard/user-categories?email=${email}`,
+                { headers: { Authorization: "Bearer " + token } }
+            );
+
+            const container = document.getElementById("email-user-result");
+
+            if (!res.ok) {
+                container.innerHTML = `
+            <div class="user-item enhanced">
+                <div class="user-avatar">!</div>
+                <div class="user-content">
+                    <span class="user-name">User not found</span>
+                    <div class="user-sub">Check the email and try again</div>
+                </div>
+            </div>
+        `;
+                return;
+            }
+
+            const data = await res.json();
+            const user = data.user;
+
+            container.innerHTML = `
+        <div class="user-item enhanced">
+            <div class="user-avatar">
+                ${user.name.charAt(0).toUpperCase()}
+            </div>
+
+            <div class="user-content">
+                <div class="user-header">
+                    <span class="user-name">${user.name}</span>
+                    <span class="user-badge">Active</span>
+                </div>
+
+                <div class="user-sub">
+                    <span class="user-email">${user.email}</span>
+                    <span class="user-date">
+                        Joined ${new Date(user.registeredAt).toLocaleDateString()}
+                    </span>
+                </div>
+            </div>
+
+            <div class="user-action">
+                <span class="material-symbols-outlined">visibility</span>
+            </div>
+        </div>
+    `;
+        }
+
+
+        function renderSearchByName() {
+            mainContent.innerHTML = `
+        <div class="dash-card full">
+            <h3>Search Users by Name</h3>
+
+            <input type="text" id="user-search" placeholder="Enter name">
+            <button onclick="searchUsers(0)">Search</button>
+
+            <div id="user-results" style="margin-top: 1.5rem;"></div>
+
+            <div class="pagination">
+                <button id="prevBtn" onclick="changePage(-1)" disabled>Prev</button>
+                <span id="pageInfo"></span>
+                <button id="nextBtn" onclick="changePage(1)" disabled>Next</button>
+            </div>
+        </div>
+    `;
+        }
+
+        let usersChartInstance = null;
+
+        async function loadUserGrowthChart(type = "daily", btn = null) {
+            const res = await fetch(`/api/dashboard/user-growth?type=${type}`, {
+                headers: { Authorization: "Bearer " + token }
+            });
+
+            const data = await res.json();
+
+            // Toggle active button
+            if (btn) {
+                document.querySelectorAll(".chart-toggle button")
+                    .forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+            }
+
+            renderUserChart(data);
+        }
+
+        function renderUserList() {
+            mainContent.innerHTML = `
+        <div class="dash-card full">
+            <h3>First 15 Registered Users</h3>
+            <button onclick="loadFirst15()">Load</button>
+            <div id="first15-users"></div>
+        </div>
+    `;
+        }
+
+        function renderSearchByEmail() {
+            mainContent.innerHTML = `
+        <div class="dash-card full">
+            <h3>Search User by Email</h3>
+            <input type="email" id="email-search" placeholder="Enter email">
+            <button onclick="searchUserCategories()">Search</button>
+            <div id="email-user-result"></div>
+        </div>
+    `;
+        }
+        function animateCounter(element, target) {
+            let start = 0;
+            const duration = 800;
+            const stepTime = 20;
+            const increment = Math.ceil(target / (duration / stepTime));
+
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    element.innerText = target;
+                    clearInterval(timer);
+                } else {
+                    element.innerText = start;
+                }
+            }, stepTime);
+        }
+        function renderUserChart(data) {
+            const ctx = document.getElementById("usersChart");
+
+            if (usersChartInstance) {
+                usersChartInstance.destroy();
+            }
+
+            usersChartInstance = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: "Users",
+                            data: data.users,
+                            borderColor: "#7380ec",
+                            backgroundColor: "rgba(115,128,236,0.2)",
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: "Categories",
+                            data: data.categories,
+                            borderColor: "#41f1b6",
+                            backgroundColor: "rgba(65,241,182,0.2)",
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: "top"
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+
+        function changePage(delta) {
+            searchUsers(currentPage + delta);
+        }
+
+        let chartRefreshInterval = null;
+
+        function startChartAutoRefresh() {
+            if (chartRefreshInterval) clearInterval(chartRefreshInterval);
+
+            chartRefreshInterval = setInterval(() => {
+                loadUserGrowthChart();
+            }, 30000); // 30 seconds
+        }
+
+        /* =========================================================
+           NAVIGATION
+        ========================================================= */
+        document.getElementById("nav-dashboard").onclick = e => {
+            e.preventDefault();
+            setActiveNav("nav-dashboard");
+            loadDashboard();
+        };
+
+        document.getElementById("nav-search-name").onclick = e => {
+            e.preventDefault();
+            setActiveNav("nav-search-name");
+            renderSearchByName();
+        };
+
+        document.getElementById("nav-user-list").onclick = e => {
+            e.preventDefault();
+            setActiveNav("nav-user-list");
+            renderUserList();
+        };
+
+        document.getElementById("nav-search-email").onclick = e => {
+            e.preventDefault();
+            setActiveNav("nav-search-email");
+            renderSearchByEmail();
+        };
+
+        document.getElementById("nav-categories").onclick = e => {
+            e.preventDefault();
+            setActiveNav("nav-categories");
+            loadCategories();
+        };
+
+        document.getElementById("toggle-theme").onclick = () => {
+            document.body.classList.toggle("dark-theme-variables");
+        };
+
+        document.getElementById("logout-btn").addEventListener("click", (e) => {
+            e.preventDefault();
+
+            if (!confirm("Are you sure you want to logout?")) return;
+
+            localStorage.removeItem("auth_token");
+            window.location.href = "/login";
+        });
+
+        /* =========================================================
+           DEFAULT LOAD
+        ========================================================= */
+        loadDashboard();
+        startChartAutoRefresh();
     </script>
-    
-    <script src = "https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+    <script>
+        function setActiveNav(id) {
+            document.querySelectorAll(".sidebar a").forEach(a => {
+                a.classList.remove("active");
+            });
+            document.getElementById(id).classList.add("active");
+        }
+    </script>
+    <script>
+        document.getElementById("logout-btn").addEventListener("click", (e) => {
+            e.preventDefault();
+
+            // Clear session
+            localStorage.removeItem("auth_token");
+
+            // Optional: clear everything
+            // localStorage.clear();
+
+            // Redirect to login
+            window.location.href = "/login";
+        });
+    </script>
+    <script>
+        (async function () {
+            const token = localStorage.getItem("auth_token");
+
+            // No token → login
+            if (!token) {
+                window.location.href = "/login";
+                return;
+            }
+
+            try {
+                const res = await fetch("/api/dashboard/me", {
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+
+                if (!res.ok) {
+                    localStorage.removeItem("auth_token");
+                    window.location.href = "/login";
+                    return;
+                }
+
+                const user = await res.json();
+                console.log("Logged in as:", user.name);
+
+            } catch (err) {
+                console.error(err);
+                localStorage.removeItem("auth_token");
+                window.location.href = "/login";
+            }
+        })();
+    </script>
 
 </body>
+
 </html>

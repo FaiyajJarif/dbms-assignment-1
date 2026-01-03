@@ -1,110 +1,420 @@
-*{
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+:root {
+    --clr-primary: #7380ec;
+    --clr-danger: #ff7782;
+    --clr-success: #41f1b6;
+    --clr-white: #fff;
+    --clr-info-dark: #7d8da1;
+    --clr-info-light: #dce1eb;
+    --clr-dark: #363949;
+    --clr-warnig: #ff4edc;
+    --clr-light: rgba(132, 139, 200, 0.18);
+    --clr-primary-variant: #111e88;
+    --clr-dark-variant: #677483;
+    --clr-color-background: #f6f6f9;
+
+    --card-border-radius: 2rem;
+    --border-radius-1: 0.4rem;
+    --border-radius-2: 0.8rem;
+    --border-radius-3: 1.2rem;
+
+    --card-padding: 1.8rem;
+    --padding-1: 1.2rem;
+    --box-shadow: 0 2rem 3rem var(--clr-light);
+
+}
+
+/* dark theme */
+.dark-theme-variables {
+    --clr-color-background: #181a1e;
+    --clr-white: #202528;
+    --clr-light: rgba(0, 0, 0, 0.4);
+    --clr-dark: #edeffd;
+    --clr-dark-variant: #677483;
+    --box-shadow: 0 2rem 3rem var(--clr-light)
+}
+
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+    appearance: none;
+    border: 0;
+}
+
+body {
+    font: "Poppins", sans-serif;
+    width: 100vw;
+    min-height: 100vh;
+    font-size: 0.88rem;
+    background: var(--clr-color-background);
 }
 
 .container {
-    height: 100vh;
-    display: flex;
-    flex-direction: row;
+    width: 96%;
+    display: grid;
+    gap: 1.8rem;
+    grid-template-columns: 14rem auto;
+    margin: 0 auto;
 }
 
-.left {
-    width: 20%;
-    background-image: url("dark_blue_.jpg");
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    padding: 20px;
+a {
+    color: var(--clr-dark)
+}
+
+h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+h2 {
+    font-size: 1.4rem;
+}
+
+h3 {
+    font-size: 0.87rem;
+}
+
+h4 {
+    font-size: 0.8rem;
+}
+
+h5 {
+    font-size: 0.77rem;
 }
 
 .logo-img {
-    height: 30px;
-    width: 30px;
-    filter: brightness(0.9) contrast(1.1);
-    cursor: pointer;
-}
-
-/* Dropdown Button */
-.left .dropdown-btn {
-    width: 100%;
-    padding: 10px;
-    font-size: 8px;
-    border: none;
-    background: rgba(51, 51, 160, 0.8);
-    cursor: pointer;
-    border-radius: 5px;
-}
-.left .dropdown-btn .menu-title {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* space between image and text */
-}
-
-.left .dropdown-btn .menu-text {
-    font-size: 20px;      /* ← change text size here */
-    font-weight: bold;    
-    color: #eeeef0;         /* or any color */
-    font-family: Arial;
-}
-
-/* Panel (hidden by default) */
-.left .dropdown-panel {
-    width: 300px;
-    height: 450px;
-    background: #e4e5e7;
-    border-radius: 10px;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 50%;
+    overflow: hidden;
     margin-top: 10px;
-    padding: 20px;
-
-    display: none; /* hidden until clicked */
-    overflow-y: auto;
 }
 
-/* When opened */
-.left .dropdown-panel.open {
-    display: block;
+.text-muted {
+    color: var(--clr-info-dark);
 }
 
-.left .dropdown-panel span {
+p {
+    color: var(--clr-dark-variant);
+}
+
+b {
+    color: var(--clr-dark);
+}
+
+.primary {
+    color: var(--clr-primary);
+}
+
+.success {
+    color: var(--clr-success);
+}
+
+.dark-theme-variables aside .menu-title {
+    background: #0f1a66;
+}
+
+.dark-theme-variables main .category-row {
+    background: #202528;
+}
+
+.dark-theme-variables .dash-card {
+    background: #202528;
+}
+
+
+/* left */
+aside {
+    min-height: 100vh;
+    align-self: stretch;
+}
+
+
+aside .menu-title {
+    background-color: #111e88;
     display: flex;
+    justify-content: space-around;
     align-items: center;
-    margin-top: 5px;
-    opacity: 0.8;
-    gap: 5px;
+    margin-top: 1.4rem;
+}
+
+aside .menu-text {
+    color: var(--clr-white);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 1rem;
+}
+
+aside .sidebar {
+    background-color: var(--clr-white);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    top: 1.4rem;
+}
+
+aside .h3 {
+    font-weight: 400;
+}
+
+aside .sidebar a {
+    display: flex;
+    color: var(--clr-info-dark);
+    margin-left: 2rem;
+    gap: 1rem;
+    align-items: center;
+    height: 3.2rem;
+    transition: all .1s ease-in;
+}
+
+aside .sidebar a span {
+    font-size: 1.6rem;
+    transition: all .1s ease-in;
+}
+
+aside .sidebar a:last-child {
+    position: absolute;
+    bottom: 1rem;
+    width: 85%;
+}
+
+aside .sidebar a:hover {
+    background-color: var(--clr-light);
+    color: var(--clr-dark);
+    border-radius: 1rem 1rem 1rem 1rem;
+}
+
+aside .sidebar a:hover span {
+    font-size: 1.8rem;
+    transition: all .4s ease-in;
+}
+
+.dark-theme-variables body {
+    background: #181a1e;
+}
+
+.dark-theme-variables aside {
+    background: #202528;
+}
+
+.dark-theme-variables aside .sidebar {
+    background: #202528;
+}
+
+.dark-theme-variables aside .sidebar a {
+    color: #edeffd;
+}
+
+.dark-theme-variables aside .sidebar a.active {
+    background: linear-gradient(135deg, #7380ec, #111e88);
+    color: white;
+  }
+  
+
+
+/* START MAIN SECTION DESIGN */
+
+/* =========================
+   MAIN CONTAINER
+========================= */
+main.right {
+    padding: 2.5rem;
+    background: linear-gradient(180deg,
+            var(--clr-color-background),
+            rgba(115, 128, 236, 0.08));
+    border-radius: 1.6rem;
+    min-height: calc(100vh - 3rem);
+    animation: fadeUp 0.5s ease forwards;
+}
+
+/* =========================
+ DASHBOARD GRID
+========================= */
+main.right .dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+/* =========================
+ DASH CARDS
+========================= */
+main.right .dash-card {
+    position: relative;
+    background: linear-gradient(135deg,
+            #ffffff,
+            rgba(255, 255, 255, 0.92));
+    padding: 2rem;
+    border-radius: 1.4rem;
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.12);
+    transition: all 0.35s ease;
+    overflow: hidden;
+}
+
+main.right .dash-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg,
+            transparent,
+            rgba(115, 128, 236, 0.18),
+            transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+main.right .dash-card:hover::before {
+    opacity: 1;
+}
+
+main.right .dash-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+}
+
+main.right .dash-card h3 {
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--clr-info-dark);
+}
+
+main.right .dash-card h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--clr-primary);
+}
+
+/* =========================
+ FULL WIDTH CARDS
+========================= */
+main.right .dash-card.full {
+    grid-column: 1 / -1;
+}
+
+/* =========================
+ CATEGORY SECTION
+========================= */
+main.right .category-section {
+    margin-bottom: 2.5rem;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    animation: fadeUp 0.6s ease forwards;
+}
+
+main.right .category-section h3 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--clr-primary-variant);
+    margin-bottom: 1.4rem;
+    position: relative;
+}
+
+main.right .category-section h3::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 45px;
+    height: 4px;
+    border-radius: 10px;
+    background: var(--clr-primary);
+}
+
+/* =========================
+ CATEGORY ROW
+========================= */
+main.right .category-row {
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.95),
+            rgba(255, 255, 255, 0.85));
+    padding: 1rem 1.4rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    transition: all 0.35s ease;
+}
+
+main.right .category-row:hover {
+    background: linear-gradient(135deg,
+            var(--clr-primary),
+            var(--clr-primary-variant));
+    color: white;
+    transform: translateY(-4px);
+}
+
+/* =========================
+ INPUTS & BUTTONS
+========================= */
+main.right input,
+main.right button {
+    font-family: "Poppins", sans-serif;
+}
+
+main.right input {
+    padding: 0.75rem 0.9rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--clr-info-light);
+    transition: all 0.3s ease;
+}
+
+main.right input:focus {
+    border-color: var(--clr-primary);
+    box-shadow: 0 0 0 4px rgba(115, 128, 236, 0.25);
+}
+
+main.right button {
+    padding: 0.7rem 1.4rem;
+    border-radius: 0.9rem;
+    background: linear-gradient(135deg,
+            var(--clr-primary),
+            var(--clr-primary-variant));
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+main.right button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px rgba(115, 128, 236, 0.45);
+}
+
+/* =========================
+ DARK MODE
+========================= */
+.dark-theme-variables main.right {
+    background: linear-gradient(180deg,
+            #181a1e,
+            rgba(115, 128, 236, 0.12));
+}
+
+input,
+textarea,
+button {
+    user-select: auto;
+    pointer-events: auto;
+    cursor: text;
+}
+
+button {
     cursor: pointer;
 }
 
-.left .dropdown-panel span:hover {
-    background-color: rgba(51, 51, 160, 0.8);
-    color: white;
-    border-radius: 5px;
-}
-
-
-.left .dropdown-panel hr{
-    border: none;
-    border-top: 1px solid #ccc;
-    height: 1px;
-    margin: 10px 0;
-}
-
-.left .dropdown-panel p{
-    font-size: 12px;
-    opacity: 0.8;
-}
-
-/* Icon size independent */
-ion-icon {
-    font-size: 14px; /* change icon size separately */
-    color: Black;     /* optional */
-    opacity: 0.6;
-}
-
-
-.right {
-    width: 80%;
-    background-image: url("White.jpg");
-    background-size: cover;
-    background-position: center;
+input,
+textarea,
+select,
+button {
+    appearance: auto !important;
+    border: 1px solid var(--clr-info-light) !important;
+    background: var(--clr-white);
+    pointer-events: auto;
 }

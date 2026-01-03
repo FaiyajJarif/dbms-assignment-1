@@ -4,7 +4,7 @@
 }
 
 .main {
-    width: 100%;
+    min-width: 100%;
     background: linear-gradient(to top, rgba(203, 198, 198, 0.5)50%, rgba(208, 204, 204, 0.5)50%), url(loginLogo.jpg);
     background-position: center;
     background-size: cover;

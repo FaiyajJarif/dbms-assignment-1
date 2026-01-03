@@ -1,14 +1,13 @@
 package com.Eqinox.store.controllers;
 
-import com.Eqinox.store.dtos.ApiResponse;
-import com.Eqinox.store.dtos.LoginRequest;
-import com.Eqinox.store.dtos.ResendVerificationRequest;
-import com.Eqinox.store.dtos.SignupRequest;
+import com.Eqinox.store.dtos.*;
 import com.Eqinox.store.entities.EmailVerificationToken;
 import com.Eqinox.store.entities.User;
 import com.Eqinox.store.repositories.EmailVerificationTokenRepository;
 import com.Eqinox.store.repositories.UserRepository;
+import com.Eqinox.store.security.JwtService;
 import com.Eqinox.store.services.EmailService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -16,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.UUID;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -32,41 +31,47 @@ public class AuthApiController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private JwtService jwtService;
+
+    // ---------- LOGIN ----------
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
 
         String email = request.getEmail();
         String password = request.getPassword();
+        boolean rememberMe = Boolean.TRUE.equals(request.getRememberMe());
 
         Optional<User> userOpt = userRepository.findByEmail(email);
-
         if (userOpt.isEmpty()) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(ApiResponse.failure("Invalid email or password"));
+            return ResponseEntity.badRequest()
+                    .body(new AuthResponse(false, "Invalid email or password", null));
         }
 
         User user = userOpt.get();
 
         if (user.getPasswordHash() == null ||
                 !BCrypt.checkpw(password, user.getPasswordHash())) {
-
-            return ResponseEntity
-                    .badRequest()
-                    .body(ApiResponse.failure("Invalid email or password"));
+            return ResponseEntity.badRequest()
+                    .body(new AuthResponse(false, "Invalid email or password", null));
         }
 
         if (Boolean.FALSE.equals(user.getIsVerified())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(ApiResponse.failure("Please verify your email before logging in."));
+            return ResponseEntity.badRequest()
+                    .body(new AuthResponse(false, "Please verify your email before logging in.", null));
         }
 
-        // TODO: add session / JWT later
-        return ResponseEntity.ok(ApiResponse.success("Login successful"));
+        String token = jwtService.generateToken(
+                user.getEmail(),
+                user.getUserId(),
+                user.getRole(),
+                rememberMe
+        );
+
+        return ResponseEntity.ok(new AuthResponse(true, "Login successful", token));
     }
 
-    // ---------- SIGNUP (REST) ----------
+    // ---------- SIGNUP ----------
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse> signup(@RequestBody SignupRequest req) {
 
@@ -74,10 +79,13 @@ public class AuthApiController {
         String email = req.getEmail();
         String password = req.getPassword();
         String confirmPassword = req.getConfirmPassword();
-        String dateOfBirth = req.getDateOfBirth(); // yyyy-MM-dd
+        String dateOfBirth = req.getDateOfBirth();
         String timezone = req.getTimezone();
         Integer budgetStartDay = req.getBudgetStartDay();
+        String phone = req.getPhone();     // 11-digit input
+        String gender = req.getGender();
 
+        // Basic validation
         if (name == null || name.isBlank()
                 || email == null || email.isBlank()
                 || password == null || password.isBlank()) {
@@ -90,22 +98,35 @@ public class AuthApiController {
                     .body(ApiResponse.failure("Passwords do not match"));
         }
 
-        // Check if email already exists
         if (userRepository.findByEmail(email).isPresent()) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.failure("Email already registered"));
         }
 
-        // Hash password
+        // 🇧🇩 Phone validation (11 digits, no +88)
+        if (phone == null || !phone.matches("^01[3-9][0-9]{8}$")) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.failure(
+                            "Enter a valid Bangladeshi phone number (11 digits, e.g. 01712345678)"
+                    ));
+        }
+
+        if (gender == null || gender.isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.failure("Gender is required"));
+        }
+
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-        // Build user entity
         User user = new User();
         user.setName(name);
         user.setEmail(email);
         user.setPasswordHash(hashedPassword);
 
-        // Optional fields
+        // Normalize phone → store with +88
+        user.setPhone("+88" + phone);
+        user.setGender(gender);
+
         if (dateOfBirth != null && !dateOfBirth.isBlank()) {
             user.setDateOfBirth(LocalDate.parse(dateOfBirth));
         }
@@ -120,41 +141,46 @@ public class AuthApiController {
             user.setBudgetStartDay(budgetStartDay);
         }
 
-        // 5. Set defaults
         user.setRole("NORMAL_USER");
-        user.setSubscriptionId(1); // free trial (ensure exists)
+        user.setSubscriptionId(1);
         user.setCreatedAt(OffsetDateTime.now());
         user.setUpdatedAt(OffsetDateTime.now());
         user.setIsVerified(false);
 
-        // 6. Save to DB
         User savedUser = userRepository.save(user);
 
-        // 7. Create verification token (valid for 24h)
+        // Email verification token
         String token = UUID.randomUUID().toString();
         EmailVerificationToken verificationToken = new EmailVerificationToken();
         verificationToken.setUserId(savedUser.getUserId());
         verificationToken.setToken(token);
         verificationToken.setExpiresAt(OffsetDateTime.now().plusDays(1));
-
+        verificationToken.setUsed(false);
         tokenRepository.save(verificationToken);
 
-        // Build verification link (adjust port if needed)
-        String verificationLink = "http://localhost:8080/verify-email?token=" + token;
+        String verificationLink = "http://localhost:8090/verify-email?token=" + token;
+        System.out.println("Verification link: " + verificationLink);
 
-        System.out.println("Verification link for " + savedUser.getEmail() + ": " + verificationLink);
-
-        // Send email (ignore failure for now)
         try {
             emailService.sendVerificationEmail(savedUser.getEmail(), verificationLink);
+            return ResponseEntity.ok(
+                    ApiResponse.success("Account created. Check your email to verify.")
+            );
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.ok(
+                    ApiResponse.success("Account created, but email could not be sent.")
+            );
         }
-
-        return ResponseEntity.ok(
-                ApiResponse.success("Account created. Please check your email to verify your account."));
     }
 
+    // ---------- LOGOUT ----------
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse> logout() {
+        return ResponseEntity.ok(ApiResponse.success("Logged out."));
+    }
+
+    // ---------- RESEND VERIFICATION ----------
     @PostMapping("/resend-verification")
     public ResponseEntity<ApiResponse> resendVerification(@RequestBody ResendVerificationRequest req) {
 
@@ -172,44 +198,35 @@ public class AuthApiController {
 
         var user = userOpt.get();
 
-        // Already verified?
         if (Boolean.TRUE.equals(user.getIsVerified())) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.failure("This email is already verified. You can log in."));
+                    .body(ApiResponse.failure("Email already verified"));
         }
 
-        // (Optional) clean up old tokens for this user
         var tokens = tokenRepository.findByUserId(user.getUserId());
-        for (var t : tokens) {
-            t.setUsed(true);
-        }
+        for (var t : tokens) t.setUsed(true);
         tokenRepository.saveAll(tokens);
 
-        // Create new token
-        String token = java.util.UUID.randomUUID().toString();
+        String token = UUID.randomUUID().toString();
         var verificationToken = new EmailVerificationToken();
         verificationToken.setUserId(user.getUserId());
         verificationToken.setToken(token);
         verificationToken.setExpiresAt(OffsetDateTime.now().plusDays(1));
         verificationToken.setUsed(false);
-
         tokenRepository.save(verificationToken);
 
-        // Build verification link (using 8080)
-        String verificationLink = "http://localhost:8080/verify-email?token=" + token;
-        System.out.println("Resent verification link for " + user.getEmail() + ": " + verificationLink);
+        String verificationLink = "http://localhost:8090/verify-email?token=" + token;
 
         try {
             emailService.sendVerificationEmail(user.getEmail(), verificationLink);
         } catch (Exception e) {
-            System.out.println("❌ Failed to resend verification email:");
             e.printStackTrace();
             return ResponseEntity.internalServerError()
-                    .body(ApiResponse.failure("Could not send verification email. Try again later."));
+                    .body(ApiResponse.failure("Could not send verification email"));
         }
 
         return ResponseEntity.ok(
-                ApiResponse.success("Verification email sent again. Please check your inbox."));
+                ApiResponse.success("Verification email sent again.")
+        );
     }
-
 }

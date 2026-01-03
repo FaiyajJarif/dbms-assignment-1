@@ -14,4 +14,6 @@ public class UserDto {
     private String name;
     private String email;
     private Boolean isVerified;
+    private String phone;
+    private String gender;
 }
