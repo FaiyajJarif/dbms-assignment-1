@@ -1,21 +1,18 @@
 version: "3.9"
 
 services:
-  db:
+  assignment-db:
     image: postgres:16
-    container_name: postgres-db-assignment
-    restart: always
-
-    environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: supersecret
-
+    container_name: assignment-db
     ports:
       - "5433:5432"
-
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: supersecret
+      POSTGRES_DB: postgres
     volumes:
       - assignment_postgres_data:/var/lib/postgresql/data
 
 volumes:
   assignment_postgres_data:
+
