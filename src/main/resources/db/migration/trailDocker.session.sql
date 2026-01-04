@@ -49,5 +49,5 @@ SELECT * FROM users;
 SELECT * FROM categories;
 
 
-SELECT * FROM user_onboarding_selections;
+SELECT * FROM flyway_schema_history;
 

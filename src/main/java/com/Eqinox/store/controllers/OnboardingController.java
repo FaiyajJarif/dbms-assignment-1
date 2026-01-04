@@ -63,12 +63,12 @@ public class OnboardingController {
 
         selectionRepository.saveAll(entities);
 
-        // ✅ mark onboarding complete on LAST STEP
+        // mark onboarding complete on LAST STEP
         if ("STEP_3".equals(request.getStep())) {
             user.setOnboardingCompleted(true);
             userRepository.save(user);
 
-            // 🔥 create categories now
+            // create categories now
             categoryInitializationService.initializeUserCategories(user);
         }
 
@@ -85,7 +85,7 @@ public class OnboardingController {
         User user = userRepository.findByEmail(email)
                 .orElseThrow();
 
-        // If already completed → go to dashboard
+        //bgo to dashboard
         if (Boolean.TRUE.equals(user.getOnboardingCompleted())) {
             return ResponseEntity.ok(
                     Map.of("completed", true));

@@ -103,7 +103,7 @@ public class AuthApiController {
                     .body(ApiResponse.failure("Email already registered"));
         }
 
-        // 🇧🇩 Phone validation (11 digits, no +88)
+        // Phone validation (11 digits, no +88)
         if (phone == null || !phone.matches("^01[3-9][0-9]{8}$")) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.failure(

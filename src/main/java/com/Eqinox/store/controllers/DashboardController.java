@@ -55,7 +55,7 @@ public class DashboardController {
                 Map.of("totalUsers", userRepository.countAllUsers()));
     }
 
-    // ================= SEARCH USERS (STARTS WITH + LIMIT/OFFSET) =================
+    // ================= SEARCH USERS =================
     @GetMapping("/search-users")
     public ResponseEntity<?> searchUsers(
             @RequestParam String keyword,
@@ -110,14 +110,14 @@ public class DashboardController {
     public ResponseEntity<?> getUserCategoriesByEmail(
             @RequestParam String email) {
 
-        // 1️⃣ Find user by email
+        // Find user by email
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 2️⃣ Find categories for that user
+        // Find categories for that user
         List<Category> categories = categoryRepository.findByUserId(user.getUserId());
 
-        // 3️⃣ Prepare response
+        // Prepare response
         return ResponseEntity.ok(Map.of(
                 "user", Map.of(
                         "name", user.getName(),

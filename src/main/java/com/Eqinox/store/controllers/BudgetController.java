@@ -27,7 +27,7 @@ public class BudgetController {
         this.userRepository = userRepository;
     }
 
-    // ✅ Get current month budget
+    //Get current month budget
     @GetMapping("/current")
     public ResponseEntity<?> getCurrentBudget(
             @RequestHeader("Authorization") String authHeader) {
@@ -43,7 +43,7 @@ public class BudgetController {
         return ResponseEntity.ok(period);
     }
 
-    // ✅ SAVE budget amount for category
+    //SAVE budget amount for category
     @PostMapping("/plan")
     public ResponseEntity<?> planBudget(
             @RequestHeader("Authorization") String authHeader,

@@ -85,7 +85,7 @@
             const total = await fetch("/api/dashboard/total-users")
                 .then(r => r.json());
 
-            // 1️⃣ Render HTML FIRST
+            // Render HTML FIRST
             mainContent.innerHTML = `
         <div class="dashboard-cards">
             <div class="dash-card">
@@ -129,7 +129,7 @@
 
     `;
 
-            // 2️⃣ Animate counter AFTER DOM exists
+            // Animate counter AFTER DOM exists
             setTimeout(() => {
                 animateCounter(
                     document.getElementById("totalUsersCounter"),
@@ -137,7 +137,7 @@
                 );
             }, 100);
 
-            // 3️⃣ Render chart AFTER canvas exists
+            // Render chart AFTER canvas exists
             loadUserGrowthChart();
         }
 
@@ -568,10 +568,6 @@
 
             // Clear session
             localStorage.removeItem("auth_token");
-
-            // Optional: clear everything
-            // localStorage.clear();
-
             // Redirect to login
             window.location.href = "/login";
         });

@@ -13,7 +13,7 @@ public class DbCheckController {
 
     @GetMapping("/db-check")
     public String checkDb() {
-        long count = userRepository.count(); // runs: SELECT COUNT(*) FROM users
+        long count = userRepository.count();
         return "DB is OK. Users in table: " + count;
     }
 }

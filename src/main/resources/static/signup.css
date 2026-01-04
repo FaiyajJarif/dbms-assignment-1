@@ -1,0 +1,243 @@
+/* =========================
+   RESET & BASE
+========================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  
+  body {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
+  }
+  
+  /* =========================
+     MAIN WRAPPER
+  ========================= */
+  .main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* =========================
+     TOP HEADER (LOGO BAR)
+  ========================= */
+  .loginPage {
+    height: 80px;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo {
+    cursor: pointer;
+  }
+
+  .logo-img {
+    width: 70px;        /* set size */
+    height: 70px;       /* same as width */
+    border-radius: 50%; /* makes it round */
+    object-fit: cover;  /* prevents stretching */
+  }
+  
+  /* =========================
+     AUTH LAYOUT
+  ========================= */
+  .loginSetup {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 80px;
+    padding: 40px;
+  }
+  
+  /* =========================
+     LEFT SECTION
+  ========================= */
+  .setUp-left {
+    max-width: 480px;
+    color: white;
+  }
+  
+  .setUp-left img {
+    width: 80px;
+  }
+  
+  .setUp-left h1 {
+    margin-top: 20px;
+    line-height: 1.2;
+  }
+  
+  .oneS {
+    font-size: 28px;
+    font-weight: 400;
+  }
+  
+  .twoS {
+    font-size: 56px;
+    font-weight: 700;
+    color: #ffd700;
+  }
+  
+  .setUp-left p {
+    margin-top: 15px;
+    font-size: 16px;
+    opacity: 0.9;
+  }
+  
+  /* =========================
+     RIGHT CARD (FORM)
+  ========================= */
+  .setUp-right {
+    background: white;
+    width: 100%;
+    max-width: 420px;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .setUp-right h2 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* =========================
+     FORM ELEMENTS
+  ========================= */
+  .setUp-right form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .setUp-right input,
+  .setUp-right select {
+    width: 100%;
+    height: 38px;
+    margin-bottom: 14px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  
+  .setUp-right input:focus,
+  .setUp-right select:focus {
+    outline: none;
+    border-color: #667eea;
+  }
+  
+  /* =========================
+     PHONE INPUT ROW
+  ========================= */
+  .setUp-right div[style*="display:flex"] {
+    display: flex;
+    width: 100%;
+    height: 38px;
+    margin-bottom: 14px;
+  }
+  
+  .setUp-right div[style*="display:flex"] span {
+    width: 50px;
+    background: #eee;
+    border: 1px solid #ccc;
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+  
+  .setUp-right div[style*="display:flex"] input {
+    flex: 1;
+    border-radius: 0 8px 8px 0;
+    border: 1px solid #ccc;
+    border-left: none;
+    margin-bottom: 0;
+  }
+  
+  /* =========================
+     LABELS
+  ========================= */
+  .setUp-right label {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-bottom: 6px;
+  }
+  
+  /* =========================
+     BUTTON
+  ========================= */
+  .logbtn {
+    width: 100%;
+    height: 40px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .logbtn:hover {
+    opacity: 0.9;
+  }
+  
+  /* =========================
+     LINKS
+  ========================= */
+  .link {
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  
+  .signup {
+    color: #667eea;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  /* =========================
+     RESPONSIVE
+  ========================= */
+  @media (max-width: 900px) {
+    .loginSetup {
+      flex-direction: column;
+      gap: 40px;
+      text-align: center;
+    }
+  
+    .setUp-left {
+      max-width: 100%;
+    }
+  
+    .twoS {
+      font-size: 48px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .loginPage {
+      height: auto;
+      padding: 20px;
+    }
+  
+    .loginSetup {
+      padding: 20px;
+    }
+  
+    .setUp-right {
+      padding: 30px 20px;
+    }
+  }
+  
